@@ -10,4 +10,79 @@ from Cards.Card import Card, Rank
 #   and flags to determine if the hand is: "Four of a Kind", "Full House", "Flush", "Straight", "Three of a Kind",
 #   "Two Pair", "One Pair", or "High Card". Return a string with the correct hand type at the end.
 def evaluate_hand(hand: list[Card]):
-    return "High Card" # If none of the above, it's High Card
+    if len(hand) == 0:
+        return "High Card"
+
+    #sacamos ranks y suits
+    ranks = [card.rank.value for card in hand]
+    suits = [card.suit for card in hand]
+
+    #contamos ranks
+    rank_count = {}
+    for r in ranks:
+        rank_count[r] = rank_count.get(r, 0) + 1
+
+    counts = sorted(rank_count.values(), reverse=True)
+
+    #contamos suits para flush
+    suit_count = {}
+    for s in suits:
+        suit_count[s] = suit_count.get(s, 0) + 1
+
+    is_flush = any(v >= 5 for v in suit_count.values())
+
+    # straight
+    unique_ranks = sorted(set(ranks))
+
+    # Ace-low
+    if 14 in unique_ranks:
+        unique_ranks.append(1)
+        unique_ranks = sorted(unique_ranks)
+
+    is_straight = False
+    for i in range(len(unique_ranks) - 4):
+        if (unique_ranks[i] + 1 == unique_ranks[i + 1] and
+                unique_ranks[i] + 2 == unique_ranks[i + 2] and
+                unique_ranks[i] + 3 == unique_ranks[i + 3] and
+                unique_ranks[i] + 4 == unique_ranks[i + 4]):
+            is_straight = True
+            break
+
+    #Straight Flush
+    if is_straight and is_flush:
+        return "Straight Flush"
+
+    #Four of a Kind
+    if 4 in counts:
+        return "Four of a Kind"
+
+    #Full House
+    if 3 in counts and 2 in counts:
+        return "Full House"
+
+    #Flush
+    if is_flush:
+        return "Flush"
+
+    # Straight
+    if is_straight:
+        return "Straight"
+
+    # Three of a Kind
+    if 3 in counts:
+        return "Three of a Kind"
+
+    # Two Pair
+    if counts.count(2) >= 2:
+        return "Two Pair"
+
+    #One Pair
+    if 2 in counts:
+        return "One Pair"
+
+    return "High Card"
+
+
+
+
+
