@@ -535,17 +535,17 @@ class GameState(State):
     #     - A clear base case to stop recursion when all parts are done
     #   Avoid any for/while loops — recursion alone must handle the repetition.
     def calculate_gold_reward(self, playerInfo, stage=0):
-        blind_type = playerInfo.blindType
+        blind_type = playerInfo.round
         score = playerInfo.score
-        target = playerInfo.target
+        target = playerInfo.score
 
         # base case
         if stage == 0:
-            if blind_type == "Small":
+            if blind_type == 1:
                 base = 4
-            elif blind_type == "Big":
+            elif blind_type == 2:
                 base = 8
-            elif blind_type == "Boss":
+            elif blind_type == 3:
                 base = 10
             else:
                 raise ValueError(f"Invalid blind type: {blind_type}")
