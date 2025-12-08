@@ -1,5 +1,7 @@
 import pygame
 import random
+
+from Levels.SubLevel import SubLevel
 from States.Menus.DebugState import DebugState
 from States.Core.StateClass import State
 from Cards.Card import Suit, Rank
@@ -537,35 +539,28 @@ class GameState(State):
     #     - A clear base case to stop recursion when all parts are done
     #   Avoid any for/while loops — recursion alone must handle the repetition.
     def calculate_gold_reward(self, playerInfo, stage=0):
-        blind_type = playerInfo.round
-        score = playerInfo.score
-        target = playerInfo.score
+
+        sub = playerInfo.levelManager.curSubLevel
+        if not hasattr(sub, "score"):
+
+            return 0
+
+        # base reward by blind
+        if stage == 0:
+            base = 4
+        elif stage == 1:
+            base = 8
+        else:
+            base = 10
+
+        remaining = playerInfo.roundScore - sub.score - stage * 1000
 
         # base case
-        if stage == 0:
-            if blind_type == 1:
-                base = 4
-            elif blind_type == 2:
-                base = 8
-            elif blind_type == 3:
-                base = 10
-            else:
-                raise ValueError(f"Invalid blind type: {blind_type}")
+        if remaining <= 0:
+            return base + (stage * 5)
 
-            # add base reward and recurse to bonus stage
-            return base + self.calculate_gold_reward(playerInfo, stage=1)
-
-        # bonus reward
-        if stage == 1:
-            # bonus = min(5, max(0, (score - target) / target * 5))
-            overkill_ratio = (score - target) / target
-            bonus = min(5, max(0, overkill_ratio * 5))
-
-            return bonus + self.calculate_gold_reward(playerInfo, stage=2)
-
-        # final stage
-        if stage == 2:
-            return 0
+        # recursive case
+        return self.calculate_gold_reward(playerInfo, stage + 1)
 
     def updateCards(self, posX, posY, cardsDict, cardsList, scale=1.5, spacing=90, baseYOffset=-20, leftShift=40):
         cardsDict.clear()
