@@ -853,6 +853,8 @@ class GameState(State):
         if "Gauntlet" in owned:
             total_chips += 250
             self.playerInfo.handsize -= 2
+            #creo que se debe usar esta linea de codigo que puse abajo pero no quiero intrude jajaa
+            #self.playerInfo.amountOfHands = self.playerInfo.amountOfHands - 2
             self.activated_jokers.add("Gauntlet")
 
         if "Ogre" in owned:
