@@ -41,7 +41,7 @@ PLANETS = {
         "levels up One Pair",
         price = 2,
         chips= 15,
-        mut = 1
+        mult = 1
     ),
     "Earth": PlanetCard(
         "Earth",
