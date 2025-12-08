@@ -76,7 +76,7 @@ PLANETS = {
         "levels up Full House",
         price = 3,
         chips = 35,
-        mut = 3
+        mult = 3
     ),
     "Neptune": PlanetCard(
         "Neptune",
