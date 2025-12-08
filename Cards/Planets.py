@@ -90,6 +90,6 @@ PLANETS = {
         "levels up all hands",
          price = 12,
          chips = 30,
-         mut = 2
+         mult = 2
     ),
 }
