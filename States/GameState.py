@@ -852,9 +852,7 @@ class GameState(State):
 
         if "Gauntlet" in owned:
             total_chips += 250
-            self.playerInfo.handsize -= 2
-            #creo que se debe usar esta linea de codigo que puse abajo pero no quiero intrude jajaa
-            #self.playerInfo.amountOfHands = self.playerInfo.amountOfHands - 2
+            self.playerInfo.amountOfHands = self.playerInfo.amountOfHands - 2
             self.activated_jokers.add("Gauntlet")
 
         if "Ogre" in owned:
@@ -873,7 +871,7 @@ class GameState(State):
                 self.activated_jokers.add("Hog Rider")
 
         if "? Block" in owned:
-            if len(self.cardsSelectedlist) == 4:
+            if len(self.playerInfo.curHandOfPlayer) == 4:
                 total_chips += 4
                 self.activated_jokers.add("Block")
 
@@ -887,7 +885,7 @@ class GameState(State):
             self.activated_jokers.add("Hogwarts")
 
         if "802" in owned:
-            if self.amountOfHands == 0:
+            if self.playerInfo.amountOfHands == 0:
                 procrastinate = True
                 self.activated_jokers.add("802")
 
