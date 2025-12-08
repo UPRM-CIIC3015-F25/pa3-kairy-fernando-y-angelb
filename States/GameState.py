@@ -539,28 +539,27 @@ class GameState(State):
     #     - A clear base case to stop recursion when all parts are done
     #   Avoid any for/while loops — recursion alone must handle the repetition.
     def calculate_gold_reward(self, playerInfo, stage=0):
-
         sub = playerInfo.levelManager.curSubLevel
-        if not hasattr(sub, "score"):
+        target = sub.score
+        score = playerInfo.roundScore
 
-            return 0
-
-        # base reward by blind
-        if stage == 0:
+        if sub.blind == 0:
             base = 4
-        elif stage == 1:
+        elif sub.blind == 1:
             base = 8
         else:
             base = 10
 
-        remaining = playerInfo.roundScore - sub.score - stage * 1000
+        raw_bonus = ((score - target) / target) * 5
+        clamped_bonus = max(0, raw_bonus)
+        bonus = min(5, clamped_bonus)
 
-        # base case
-        if remaining <= 0:
-            return base + (stage * 5)
+        bonus = int(bonus)
 
-        # recursive case
-        return self.calculate_gold_reward(playerInfo, stage + 1)
+        if stage == 0:
+            return self.calculate_gold_reward(playerInfo, stage + 1)
+
+        return base + bonus
 
     def updateCards(self, posX, posY, cardsDict, cardsList, scale=1.5, spacing=90, baseYOffset=-20, leftShift=40):
         cardsDict.clear()
