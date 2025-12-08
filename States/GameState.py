@@ -864,8 +864,7 @@ class GameState(State):
             self.activated_jokers.add("Ogre")
 
         if "StrawHat" in owned:
-            total_chips += 100
-            total_chips -= (self.handsPlayed * 5)
+
             self.activated_jokers.add("StrawHat")
             #
 
