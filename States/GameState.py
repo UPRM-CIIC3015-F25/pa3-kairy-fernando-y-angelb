@@ -27,16 +27,16 @@ class GameState(State):
         self.deck = State.deckManager.shuffleDeck(State.deckManager.createDeck(self.playerInfo.levelManager.curSubLevel))
         self.hand = State.deckManager.dealCards(self.deck, 8)
         self.cards = {}
-        
+
         self.jokerDeck = State.deckManager.createJokerDeck()
         self.playerJokers = []
         self.jokers = {}
         # track which jokers activated for the current played hand (used to offset their draw)
         self.activated_jokers = set()
-        
+
         # for joker in self.jokerDeck:
         #     print(joker.name)
-        
+
         self.cardsSelectedList = []
         self.cardsSelectedRect = {}
         self.playedHandNameList = ['']
@@ -116,6 +116,8 @@ class GameState(State):
         self.playedHandTextSurface = None
         self.scoreBreakdownTextSurface = None
         self.pending_round_add = 0      # amount to add to roundScore when timer expires
+        self.handsPlayed=0
+
 
         self.updateCards(400, 520, self.cards, self.hand, scale=1.2)
 
@@ -187,7 +189,7 @@ class GameState(State):
             self.nextState = "ShopState"
 
             return
-        
+
         # Handle boss level music switching
         bossName = self.playerInfo.levelManager.curSubLevel.bossLevel
         if bossName and not self.isBossActive:
@@ -196,7 +198,7 @@ class GameState(State):
         elif not bossName and self.isBossActive:
             self.isBossActive = False
             self.switchToNormalTheme()
-            
+
         # Handle play hand timing
         if self.playHandActive and self.playHandStartTime > 0:
             curTime = pygame.time.get_ticks()
@@ -614,7 +616,7 @@ class GameState(State):
         for card, rect in self.cards.items():
             if rect.collidepoint(mousePos):
                 break
-    
+
     def drawCardTooltip(self):
         mousePos = pygame.mouse.get_pos()
         for card, rect in self.cards.items():
@@ -642,7 +644,7 @@ class GameState(State):
                 tooltip_y = rect.y - tooltip_h - 10
                 self.screen.blit(tooltip_surf, (tooltip_x, tooltip_y))
                 break
-    
+
     # -------- Play Hand Logic -----------
     def playHand(self):
         if self.playerInfo.amountOfHands == 0: # Check if last hand and failed the round
@@ -665,6 +667,7 @@ class GameState(State):
                 pygame.quit()
 
         self.playerInfo.amountOfHands -= 1
+        self.handsPlayed+=1
         hand_name = evaluate_hand(self.cardsSelectedList)
         self.playedHandName = hand_name
         self.playedHandNameList.append(hand_name)
@@ -860,10 +863,10 @@ class GameState(State):
             hand_mult += joker_count * 3
             self.activated_jokers.add("Ogre")
 
-        if "Straw Hat" in owned:
+        if "StrawHat" in owned:
             total_chips += 100
             total_chips -= (self.handsPlayed * 5)
-            self.activated_jokers.add("Straw Hat")
+            self.activated_jokers.add("StrawHat")
 
         if "Hog Rider" in owned:
             if hand_name == "Straight":
