@@ -41,55 +41,55 @@ PLANETS = {
         "levels up One Pair",
         price = 2,
         chips= 15,
-        mut = 1
+        mult = 1
     ),
     "Earth": PlanetCard(
         "Earth",
         "levels up Two Pair",
         price = 2,
         chips = 15,
-        mut = 2
+        mult = 2
     ),
     "Mars": PlanetCard(
         "Mars",
         "levels up Three of a Kind",
         price = 2,
         chips = 25,
-        mut = 2
+        mult = 2
     ),
     "Jupiter": PlanetCard(
         "Jupiter",
         "levels up Straight",
         price = 3,
         chips = 25,
-        mut = 3
+        mult = 3
     ),
     "Saturn": PlanetCard(
         "Saturn",
         "levels up Flush",
         price = 3,
         chips = 30,
-        mut = 3
+        mult = 3
     ),
     "Uranus": PlanetCard(
         "Uranus",
         "levels up Full House",
         price = 3,
         chips = 35,
-        mut = 3
+        mult = 3
     ),
     "Neptune": PlanetCard(
         "Neptune",
         "levels up Four of a Kind",
         price = 3,
         chips = 40,
-        mut = 4
+        mult = 4
     ),
     "Sun": PlanetCard(
         "Sun",
         "levels up all hands",
          price = 12,
          chips = 30,
-         mut = 2
+         mult = 2
     ),
 }
