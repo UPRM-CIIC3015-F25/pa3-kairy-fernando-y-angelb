@@ -27,16 +27,16 @@ class GameState(State):
         self.deck = State.deckManager.shuffleDeck(State.deckManager.createDeck(self.playerInfo.levelManager.curSubLevel))
         self.hand = State.deckManager.dealCards(self.deck, 8)
         self.cards = {}
-        
+
         self.jokerDeck = State.deckManager.createJokerDeck()
         self.playerJokers = []
         self.jokers = {}
         # track which jokers activated for the current played hand (used to offset their draw)
         self.activated_jokers = set()
-        
+
         # for joker in self.jokerDeck:
         #     print(joker.name)
-        
+
         self.cardsSelectedList = []
         self.cardsSelectedRect = {}
         self.playedHandNameList = ['']
@@ -116,6 +116,8 @@ class GameState(State):
         self.playedHandTextSurface = None
         self.scoreBreakdownTextSurface = None
         self.pending_round_add = 0      # amount to add to roundScore when timer expires
+        self.handsPlayed=0
+
 
         self.updateCards(400, 520, self.cards, self.hand, scale=1.2)
 
@@ -187,7 +189,7 @@ class GameState(State):
             self.nextState = "ShopState"
 
             return
-        
+
         # Handle boss level music switching
         bossName = self.playerInfo.levelManager.curSubLevel.bossLevel
         if bossName and not self.isBossActive:
@@ -196,7 +198,7 @@ class GameState(State):
         elif not bossName and self.isBossActive:
             self.isBossActive = False
             self.switchToNormalTheme()
-            
+
         # Handle play hand timing
         if self.playHandActive and self.playHandStartTime > 0:
             curTime = pygame.time.get_ticks()
@@ -535,6 +537,34 @@ class GameState(State):
     #     - A clear base case to stop recursion when all parts are done
     #   Avoid any for/while loops — recursion alone must handle the repetition.
     def calculate_gold_reward(self, playerInfo, stage=0):
+        blind_type = playerInfo.round
+        score = playerInfo.score
+        target = playerInfo.score
+
+        # base case
+        if stage == 0:
+            if blind_type == 1:
+                base = 4
+            elif blind_type == 2:
+                base = 8
+            elif blind_type == 3:
+                base = 10
+            else:
+                raise ValueError(f"Invalid blind type: {blind_type}")
+
+            # add base reward and recurse to bonus stage
+            return base + self.calculate_gold_reward(playerInfo, stage=1)
+
+        # bonus reward
+        if stage == 1:
+            # bonus = min(5, max(0, (score - target) / target * 5))
+            overkill_ratio = (score - target) / target
+            bonus = min(5, max(0, overkill_ratio * 5))
+
+            return bonus + self.calculate_gold_reward(playerInfo, stage=2)
+
+        # final stage
+        if stage == 2:
             return 0
 
     def updateCards(self, posX, posY, cardsDict, cardsList, scale=1.5, spacing=90, baseYOffset=-20, leftShift=40):
@@ -586,7 +616,7 @@ class GameState(State):
         for card, rect in self.cards.items():
             if rect.collidepoint(mousePos):
                 break
-    
+
     def drawCardTooltip(self):
         mousePos = pygame.mouse.get_pos()
         for card, rect in self.cards.items():
@@ -614,7 +644,7 @@ class GameState(State):
                 tooltip_y = rect.y - tooltip_h - 10
                 self.screen.blit(tooltip_surf, (tooltip_x, tooltip_y))
                 break
-    
+
     # -------- Play Hand Logic -----------
     def playHand(self):
         if self.playerInfo.amountOfHands == 0: # Check if last hand and failed the round
@@ -637,6 +667,7 @@ class GameState(State):
                 pygame.quit()
 
         self.playerInfo.amountOfHands -= 1
+        self.handsPlayed+=1
         hand_name = evaluate_hand(self.cardsSelectedList)
         self.playedHandName = hand_name
         self.playedHandNameList.append(hand_name)
@@ -824,7 +855,7 @@ class GameState(State):
 
         if "Gauntlet" in owned:
             total_chips += 250
-            self.playerInfo.handsize -= 2
+            self.playerInfo.amountOfHands = self.playerInfo.amountOfHands - 2
             self.activated_jokers.add("Gauntlet")
 
         if "Ogre" in owned:
@@ -832,10 +863,11 @@ class GameState(State):
             hand_mult += joker_count * 3
             self.activated_jokers.add("Ogre")
 
-        if "Straw Hat" in owned:
+        if "StrawHat" in owned:
             total_chips += 100
             total_chips -= (self.handsPlayed * 5)
-            self.activated_jokers.add("Straw Hat")
+            self.activated_jokers.add("StrawHat")
+            #
 
         if "Hog Rider" in owned:
             if hand_name == "Straight":
@@ -843,7 +875,7 @@ class GameState(State):
                 self.activated_jokers.add("Hog Rider")
 
         if "? Block" in owned:
-            if len(self.cardsSelectedlist) == 4:
+            if len(self.playerInfo.curHandOfPlayer) == 4:
                 total_chips += 4
                 self.activated_jokers.add("Block")
 
@@ -857,7 +889,7 @@ class GameState(State):
             self.activated_jokers.add("Hogwarts")
 
         if "802" in owned:
-            if self.amountOfHands == 0:
+            if self.playerInfo.amountOfHands == 0:
                 procrastinate = True
                 self.activated_jokers.add("802")
 
