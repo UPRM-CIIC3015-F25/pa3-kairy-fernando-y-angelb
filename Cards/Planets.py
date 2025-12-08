@@ -62,7 +62,7 @@ PLANETS = {
         "levels up Straight",
         price = 3,
         chips = 25,
-        mut = 3
+        mult = 3
     ),
     "Saturn": PlanetCard(
         "Saturn",
