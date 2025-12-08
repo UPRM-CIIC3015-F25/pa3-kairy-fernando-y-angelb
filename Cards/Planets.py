@@ -69,7 +69,7 @@ PLANETS = {
         "levels up Flush",
         price = 3,
         chips = 30,
-        mut = 3
+        mult = 3
     ),
     "Uranus": PlanetCard(
         "Uranus",
