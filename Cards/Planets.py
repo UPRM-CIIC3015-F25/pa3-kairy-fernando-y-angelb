@@ -34,7 +34,7 @@ PLANETS = {
         "levels up High Card",
         price = 2,
         chips = 10,
-        mut = 1
+        mult = 1
     ),
     "Venus": PlanetCard(
         "Venus",
