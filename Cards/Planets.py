@@ -83,7 +83,7 @@ PLANETS = {
         "levels up Four of a Kind",
         price = 3,
         chips = 40,
-        mut = 4
+        mult = 4
     ),
     "Sun": PlanetCard(
         "Sun",
